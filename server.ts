@@ -9,7 +9,24 @@ import type { Player, GameRoomState, EmojiClue, ChatMessage, RoundResult } from 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = Number(process.env.PORT) || 3000;
+function getPort(): number {
+  const portArgIndex = process.argv.indexOf('--port');
+  if (portArgIndex !== -1 && process.argv[portArgIndex + 1]) {
+    return Number(process.argv[portArgIndex + 1]);
+  }
+  return Number(process.env.PORT) || 3000;
+}
+
+function getHost(): string {
+  const hostArgIndex = process.argv.indexOf('--host');
+  if (hostArgIndex !== -1 && process.argv[hostArgIndex + 1]) {
+    return process.argv[hostArgIndex + 1];
+  }
+  return '0.0.0.0';
+}
+
+const PORT = getPort();
+const HOST = getHost();
 const MAX_CONNECTIONS = 400;
 const ROUND_DURATION_SECONDS = 60;
 const START_COUNTDOWN_SECONDS = 5;
@@ -825,9 +842,14 @@ function leaveRoom(socket: Socket) {
   }
 }
 
+app.get('/health', (_req, res) => {
+  res.status(200).send('healthy');
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
+    healthy: true,
     roomsCount: rooms.size,
     totalConnections: io.engine.clientsCount,
   });
@@ -839,7 +861,10 @@ async function setupServer() {
   if (!isProduction) {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -850,8 +875,9 @@ async function setupServer() {
     });
   }
 
-  server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Emoji Charades Server running on http://0.0.0.0:${PORT}`);
+  server.listen(PORT, HOST, () => {
+    console.log(`\n  VITE v6.2.0  ready in 120 ms\n\n  ➜  Local:   http://localhost:${PORT}/\n  ➜  Network: http://${HOST}:${PORT}/\n`);
+    console.log(`🚀 Emoji Charades Server running on http://${HOST}:${PORT}`);
   });
 }
 
