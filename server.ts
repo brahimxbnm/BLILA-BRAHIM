@@ -3,8 +3,8 @@ import http from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { WORD_BANK, maskWord, WordEntry } from './src/words.js';
-import type { Player, GameRoomState, EmojiClue, ChatMessage, RoundResult } from './src/types.js';
+import { WORD_BANK, maskWord, type WordEntry } from './src/words.ts';
+import type { Player, GameRoomState, EmojiClue, ChatMessage, RoundResult } from './src/types.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
