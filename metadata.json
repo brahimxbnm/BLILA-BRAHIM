@@ -1,0 +1,8 @@
+{
+  "name": "Emoji Charades Live",
+  "description": "A real-time multiplayer emoji guessing game featuring auto-matched rooms, rotating roles, and competitive scoring in your browser.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
